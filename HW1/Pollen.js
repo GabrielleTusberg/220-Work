@@ -1,51 +1,52 @@
-var Pollen = function (m, x, y) {
-  this.mass = m
-  this.position = createVector (x,y);
-  this.velocity = createVector(0,0);
-  this.accel = createVector(0,0);
-  this.size = createVector(0,0);
-
-
-  this.applyForce = function(force) {
-    var f = p5.Vector.div(force, this.mass);
-    this.accel.add(f);
-  };
-
-  this.update = function() {
-    var angle = random(TWO_PI);
-    this.accel = createVector (cos(angle), sin(angle));
-    this.accel.mult(random(2));
-    this.velocity.add(this.accel);
-    this.velocity.limit(2);
-    this.position.add(this.velocity);
-    this.accel.mult(0);
-    this.show();
-    this.checkEdges();
-  };
-  this.show = function() {
-    fill(255, 255, 6);
-    this.size.x = 5;
-    this.size.y = 5;
-    ellipse(this.position.x, this.position.y, this.size.x, this.size.y);
-  };
-
-  this.checkEdges = function() {
-    if(this.position.x > width) {
-      this.position.x < 0;
-    } else if (this.position.x < 0){
-      this.position.x = width;
-    }
-    if (this.position.y > height){
-      this.position.y = height;
-      this.velocity.y *= -1;
-    } else if (this.position.y < 0) {
-      this.position.y =0;
-      this.velocity.y *= -1;
-    }
-
-
-
-  }
-
-
+var Pollen = function (loc, vel) {
+  //this.mass = m
+  this.loc = loc.copy();
+  this.vel = vel.copy();
+  this.acc = createVector(0,0.1);
+  this.size = 20;
+  this.speedLimit = 100;
+  this.lifespan = 1.5;
+// initial calc
+  this.lifespan = frameRate() * this.lifespan;
+  this.timeAlive = this.lifespan;
 }
+
+Pollen.prototype.frame = function(){
+    this.update();
+    this.display();
+    return this.isDead();
+  };
+
+  Pollen.prototype.display = function() {
+    var alp = map(this.timeAlive, 0, this.lifespan, 0, 200 );
+
+    push();
+    noStroke();
+    fill(255, 255, 6, alp);
+    //this.size.x = 5;
+    //this.size.y = 5;
+    ellipse( this.loc.x, this.loc.y, this.size);
+    pop();
+    };
+
+//this.applyForce = function(force) {
+  //  var f = p5.Vector.div(force, this.mass);
+    //this.accel.add(f);
+//}
+//  };
+Pollen.prototype.update = function(){
+
+      this.vel.add(this.acc);
+      this.vel.limit(this.speedLimit);
+      this.loc.add(this.vel);
+
+      this.timeAlive--;
+  };
+
+  Pollen.prototype.isDead = function(){
+      if (this.timeAlive < 0) {
+          return true;
+      } else {
+          return false;
+      }
+  };

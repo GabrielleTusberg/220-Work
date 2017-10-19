@@ -10,7 +10,7 @@ this.update = function() {
 };
 
 this.show= function() {
-  fill(0,255, 0);
+  fill(7, 158, 77);
 //stroke(0);
 //strokeWeight(5);
 noStroke();
@@ -24,7 +24,4 @@ fill(210, 33, 128);
 ellipse(this.position.x, this.position.y, this.center, 10);
 
 };
-
-
-
-}
+};
